@@ -58,6 +58,50 @@ module Server = struct
       client_addr
       socket
 
+  module TLS = struct
+    let create_connection_handler
+          ?(config = H2.Config.default)
+          ~request_handler
+          ~error_handler
+          client_addr
+          socket
+      =
+      let connection =
+        H2.Server_connection.create
+          ~config
+          ~error_handler:(error_handler client_addr)
+          (request_handler client_addr)
+      in
+      Gluten_async.Server.TLS.create_connection_handler
+        ~read_buffer_size:config.read_buffer_size
+        ~protocol:(module H2.Server_connection)
+        connection
+        client_addr
+        socket
+
+    let create_connection_handler_with_default
+          ~certfile
+          ~keyfile
+          ?config
+          ~request_handler
+          ~error_handler
+          where_to_connect
+      =
+      let make_tls_server =
+        Gluten_async.Server.TLS.create_default
+          ~alpn_protocols:[ "h2" ]
+          ~certfile
+          ~keyfile
+      in
+      fun client_addr socket ->
+      make_tls_server client_addr socket where_to_connect >>= fun tls_server ->
+      create_connection_handler
+        ?config
+        ~request_handler
+        ~error_handler
+        client_addr
+        tls_server
+  end
   module SSL = struct
     let create_connection_handler
         ?(config = H2.Config.default)

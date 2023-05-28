@@ -40,6 +40,21 @@ module Server : sig
     H2_async_intf.Server
     with type 'a socket = ([ `Active ], ([< Socket.Address.t ] as 'a)) Socket.t
 
+  module TLS : sig
+    include H2_async_intf.Server
+            with type 'a socket := 'a Gluten_async.Server.TLS.socket
+
+    val create_connection_handler_with_default :
+       certfile:string
+      -> keyfile:string
+      -> ?config:Config.t
+      -> request_handler:('a -> Server_connection.request_handler)
+      -> error_handler:('a -> Server_connection.error_handler)
+      -> ('a, 'listening_on) Tcp.Where_to_listen.t
+      -> (Socket.Address.Inet.t as 'a)
+      -> ([ `Unconnected ], 'a) Socket.t
+      -> unit Deferred.t
+  end
   module SSL : sig
     include
       H2_async_intf.Server
@@ -86,8 +101,8 @@ module Client : sig
       -> ?push_handler:
            (Request.t -> (Client_connection.response_handler, unit) result)
       -> error_handler:Client_connection.error_handler
-      -> ([ `Unconnected ], 'addr) Socket.t
-      -> 'addr Tcp.Where_to_connect.t
-      -> 'addr t Deferred.t
+      -> ([ `Unconnected ], 'a) Socket.t
+      -> 'a Tcp.Where_to_connect.t
+      -> 'a t Deferred.t
   end
 end
