@@ -33,6 +33,6 @@ build: [
 ]
 dev-repo: "git+https://github.com/anmonteiro/ocaml-h2.git"
 pin-depends: [
-  [ "gluten-async.dev" "git+https://github.com/tmcgilchrist/gluten#723edc072a730eb135df2706eee8a373d7f4398a" ]
-  [ "gluten.dev" "git+https://github.com/tmcgilchrist/gluten#723edc072a730eb135df2706eee8a373d7f4398a" ]
+  [ "gluten-async.dev" "git+https://github.com/tmcgilchrist/gluten#b611fca2e111fadc5ba989e172723ae91202d8fc" ]
+  [ "gluten.dev" "git+https://github.com/tmcgilchrist/gluten#b611fca2e111fadc5ba989e172723ae91202d8fc" ]
 ]

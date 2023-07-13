@@ -45,13 +45,12 @@ module Server : sig
             with type 'a socket := 'a Gluten_async.Server.TLS.socket
 
     val create_connection_handler_with_default :
-       certfile:string
+         certfile:string
       -> keyfile:string
       -> ?config:Config.t
       -> request_handler:('a -> Server_connection.request_handler)
       -> error_handler:('a -> Server_connection.error_handler)
-      -> ('a, 'listening_on) Tcp.Where_to_listen.t
-      -> (Socket.Address.Inet.t as 'a)
+      -> (Socket.Address.Inet.t as 'a, [< Socket.Address.t]) Tcp.Where_to_listen.t
       -> ([ `Unconnected ], 'a) Socket.t
       -> unit Deferred.t
   end
