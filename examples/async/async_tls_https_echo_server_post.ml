@@ -45,19 +45,23 @@ let main port max_accepts_per_batch () =
       Tcp.Bind_to_address.Localhost
       (Tcp.Bind_to_port.On_port port)
   in
+  (* let h =  *)
+  (* let handler : ('a -> ([ `Active ], 'a) Socket.t -> unit Deferred.t) = _ in *)
+  (* Tcp.( Server.create_sock *)
+  (*         ~on_handler_error:`Ignore *)
+  (*         ~backlog:10_000 *)
+  (*         ~max_connections:10_000 *)
+  (*         ~max_accepts_per_batch *)
+  (*         where_to_listen) handler *)
   let config = Config.default in
   let b = Server.create_connection_handler ~config ~request_handler ~error_handler in
-  let a = Server.SSL.create_connection_handler ~config
-            ~request_handler
-            ~error_handler in
-  Tcp.(
-    Server.create_sock
-      ~on_handler_error:`Ignore
-      ~backlog:10_000
-      ~max_connections:10_000
-      ~max_accepts_per_batch
-      where_to_listen) b
-
+  (* let a = Server.TLS.create_connection_handler ~config ~request_handler ~error_handler in *)
+  Tcp.(Server.create_sock
+          ~on_handler_error:`Ignore
+          ~backlog:10_000
+          ~max_connections:10_000
+          ~max_accepts_per_batch
+          where_to_listen) b
   >>= fun _server -> Deferred.never ()
 
 let () =

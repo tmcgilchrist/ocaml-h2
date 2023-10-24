@@ -85,24 +85,21 @@ module Server = struct
           ?config
           ~request_handler
           ~error_handler
-          where_to_listen
       =
       let make_tls_server =
-        Gluten_async.Server.TLS.create_default
-          ~alpn_protocols:[ "h2" ]
-          ~certfile
-          ~keyfile
-          where_to_listen
+        Gluten_tls.create_default
+        ~alpn_protocols:[ "h2" ]
+        ~certfile
+        ~keyfile
       in
-      fun socket ->
-      let client_addr = Tcp.Where_to_listen.address where_to_listen in
-      make_tls_server socket >>= fun tls_server ->
-      create_connection_handler
-        ?config
-        ~request_handler
-        ~error_handler
-        client_addr
-        tls_server
+      fun client_addr socket ->
+        make_tls_server client_addr socket >>= fun tls_server ->
+        create_connection_handler
+         ?config
+         ~request_handler
+         ~error_handler
+         client_addr
+         tls_server
   end
   module SSL = struct
     let create_connection_handler
