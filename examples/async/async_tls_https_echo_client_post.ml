@@ -17,7 +17,7 @@ let response_handler response_received_ivar response response_body =
     let rec read_response () =
       Body.Reader.schedule_read
         response_body
-        ~on_eof:(fun () -> Ivar.fill response_received_ivar ())
+        ~on_eof:(fun () -> (Ivar.fill [@alert "-deprecated"]) response_received_ivar ())
         ~on_read:(fun response_fragment ~off ~len ->
           printf
             "Server response: %s\n%!"

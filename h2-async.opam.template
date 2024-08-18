@@ -1,8 +1,0 @@
-pin-depends: [
-  [ "gluten-async.dev" "git+https://github.com/tmcgilchrist/gluten#7bfd22aeda299282c60cb1b58942d86f28518037" ]
-  [ "gluten.dev" "git+https://github.com/tmcgilchrist/gluten#7bfd22aeda299282c60cb1b58942d86f28518037" ]
-  [ "gluten-lwt.dev" "git+https://github.com/tmcgilchrist/gluten#7bfd22aeda299282c60cb1b58942d86f28518037" ]
-  [ "gluten-lwt-unix.dev" "git+https://github.com/tmcgilchrist/gluten#7bfd22aeda299282c60cb1b58942d86f28518037" ]
-  [ "gluten-mirage.dev" "git+https://github.com/tmcgilchrist/gluten#7bfd22aeda299282c60cb1b58942d86f28518037" ]  
-  [ "gluten-eio.dev" "git+https://github.com/tmcgilchrist/gluten#7bfd22aeda299282c60cb1b58942d86f28518037" ]  
-]

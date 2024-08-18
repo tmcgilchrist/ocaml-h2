@@ -50,8 +50,8 @@ module Server : sig
       -> ?config:Config.t
       -> request_handler:('a -> Server_connection.request_handler)
       -> error_handler:('a -> Server_connection.error_handler)
-      -> (Socket.Address.Inet.t as 'a)
-      -> ([ `Active ], 'a) Socket.t
+      -> ('a, 'listening_on) Tcp.Where_to_listen.t
+      -> ([ `Unconnected ], 'a) Socket.t
       -> unit Deferred.t
   end
   module SSL : sig

@@ -39,29 +39,36 @@ let request_handler sock reqd =
     Body.Reader.schedule_read (Reqd.request_body reqd) ~on_eof ~on_read
   | _ -> Reqd.respond_with_string reqd (Response.create `Method_not_allowed) ""
 
-let main port max_accepts_per_batch () =
+let main port () =
   let where_to_listen =
     Tcp.Where_to_listen.bind_to
       Tcp.Bind_to_address.Localhost
       (Tcp.Bind_to_port.On_port port)
   in
-  (* let h =  *)
-  (* let handler : ('a -> ([ `Active ], 'a) Socket.t -> unit Deferred.t) = _ in *)
-  (* Tcp.( Server.create_sock *)
+  let socket = Unix.Socket.create Unix.Socket.Type.tcp in
+  (* let a = Tcp.(Server.create_sock *)
   (*         ~on_handler_error:`Ignore *)
   (*         ~backlog:10_000 *)
   (*         ~max_connections:10_000 *)
   (*         ~max_accepts_per_batch *)
-  (*         where_to_listen) handler *)
+  (*         where_to_listen) in *)
+  (* $ dune exec -- examples/async/async_tls_https_echo_server_post.exe *)
+  (*                                 (monitor.ml.Error                      *)
+  (*                                    ("Writer error from inner_monitor" *)
+  (*                                       (Unix.Unix_error "Socket is not connected" writev_assume_fd_is_nonblocking *)
+  (*                                          "") *)
+  (*                                       (writer *)
+  (*                                          ((file_descr 5) (info ((type_ tcp) (listening_on 127.0.0.1:8080))) *)
+  (*                                             (kind (Socket Passive))))) *)
+  (*                                    ("Caught by monitor (id 17)")) *)
+
   let config = Config.default in
-  let b = Server.create_connection_handler ~config ~request_handler ~error_handler in
-  (* let a = Server.TLS.create_connection_handler ~config ~request_handler ~error_handler in *)
-  Tcp.(Server.create_sock
-          ~on_handler_error:`Ignore
-          ~backlog:10_000
-          ~max_connections:10_000
-          ~max_accepts_per_batch
-          where_to_listen) b
+  (Server.TLS.create_connection_handler_with_default
+     ~config
+     ~certfile:"./certificates/server.pem"
+     ~keyfile:"./certificates/server.key"
+     ~request_handler
+     ~error_handler where_to_listen socket)
   >>= fun _server -> Deferred.never ()
 
 let () =
@@ -72,10 +79,6 @@ let () =
       +> flag
            "-port"
            (optional_with_default 8080 int)
-           ~doc:"int Source port to listen on"
-      +> flag
-           "-a"
-           (optional_with_default 1 int)
-           ~doc:"int Maximum accepts per batch")
+           ~doc:"int Source port to listen on")
     main
   |> Command_unix.run
