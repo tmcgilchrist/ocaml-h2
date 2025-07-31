@@ -110,8 +110,9 @@ let mk_encode_table encode_table =
       (fun acc (code, length) ->
          let tup =
            Exp.tuple
-             [ Exp.constant (Pconst_integer (string_of_int code, None))
-             ; Exp.constant (Pconst_integer (string_of_int length, None))
+             [ Exp.constant {pconst_desc = (Pconst_integer (string_of_int code, None))
+               ; pconst_loc = Location.none}
+               ; Exp.constant {pconst_desc = (Pconst_integer (string_of_int length, None)); pconst_loc = Location.none}
              ]
          in
          tup :: acc)
@@ -122,8 +123,12 @@ let mk_encode_table encode_table =
 
 let output_transition (id, accept, symbol) =
   let output_int = function
-    | Some i -> Exp.constant (Pconst_integer (string_of_int i, None))
-    | None -> Exp.constant (Pconst_integer ("-1", None))
+    | Some i -> Exp.constant
+      { pconst_desc = (Pconst_integer (string_of_int i, None))
+      ; pconst_loc = Location.none}
+    | None -> Exp.constant
+      {pconst_desc = (Pconst_integer ("-1", None)); pconst_loc = Location.none}
+
   in
   let output_bool b =
     Exp.construct
@@ -133,8 +138,8 @@ let output_transition (id, accept, symbol) =
       None
   in
   let output_char = function
-    | Some c -> Exp.constant (Pconst_char c)
-    | None -> Exp.constant (Pconst_char '\000')
+    | Some c -> Exp.constant {pconst_desc =  (Pconst_char c); pconst_loc = Location.none}
+    | None -> Exp.constant {pconst_desc =  (Pconst_char '\000'); pconst_loc = Location.none}
   in
   Exp.tuple [ output_int id; output_bool accept; output_char symbol ]
 
